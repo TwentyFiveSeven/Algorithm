@@ -1,0 +1,86 @@
+package Junegyu;
+
+import java.util.Scanner;
+
+public class Main {
+	public Main() {
+		int E=0,S=0,M=0;
+		Scanner sc =new Scanner(System.in);
+		int count=0;
+		E= sc.nextInt();
+		S= sc.nextInt();
+		M= sc.nextInt();
+		if(E >=S&& E>=M) {
+			while(true) {
+				if(S >=E);
+				else {
+					S+=28;
+				}
+				if(M>=E);
+				else {
+					M+=19;
+				}
+				if(M==E&&S==E) {
+					System.out.println(E);
+					break;
+				}else if(E<=S&&E<=M) {
+					while(true) {
+						if(E>=S&&E>=M)
+							break;
+						E+=15;
+					}
+				}
+			}
+		}else if(S>=M && S>=E) {	//S가 제일 클 때
+			while(true) {
+				if(E >=S);
+				else {
+					E+=15;
+				}
+				if(M>=S);
+				else {
+					M+=19;
+				}
+				if(E==S&&M==S) {
+					System.out.println(S);
+					break;
+				}else if( S<=M && S<=E) {
+					while(true) {
+						if(S>=M&&S>=E)
+							break;
+						S+=28;	
+					}
+				}
+			}
+		}
+		else if(M>=S && M>=E){	//M이 제일 클 때
+			while(true) {
+
+				count++;
+				if(E >=M);
+				else {
+					E+=15;
+				}
+				if(S>=M);
+				else {
+					S+=28;
+				}
+				if(E==M&&S==M) {
+					System.out.println(M);
+					break;
+				}else if(M<=S&&M<=E) {
+					while(true) {
+						if(M>=S&&M>=E)
+							break;
+						M+=19;
+					}
+				}
+			}
+			
+		}
+	}
+	public static void main(String[] args) {
+		Main s = new Main();
+	}
+}
+
