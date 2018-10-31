@@ -1,0 +1,148 @@
+package RemoteControler;
+
+import java.util.Iterator;
+import java.util.Scanner;
+import java.util.Vector;
+
+public class Main {
+	public Main() {
+		Vector<Integer> arr = new Vector<>();
+		int skip;
+		int wantN=0,Destination=0,channel=0;
+		int input,count=0,save,select=0,sub=0;
+		int button100000=0,button10000=0,button1000=0,button100=0,button10=0;
+		Scanner sc = new Scanner(System.in);
+		
+		for(int i=0; i<10;i++)
+			arr.add(i);
+		
+		Destination = sc.nextInt();
+		wantN=Destination;
+		input = sc.nextInt();
+		
+		for(int i=0; i<input;i++) {
+			skip=sc.nextInt();
+			arr.removeElement(skip);
+		}
+		if(Destination/100000>0) {
+			sub=9;
+			save=Destination/100000;
+			Destination=Destination-(Destination/100000)*100000;
+			for(int i=0; i<arr.size();i++)
+				if(Math.abs(arr.elementAt(i)-save)<sub) {
+					sub=Math.abs(arr.elementAt(i)-save);
+					select=arr.elementAt(i);
+				}
+			channel+=select*100000;
+			count++;
+			button100000=1;
+		}
+		if(Destination/10000>0) {
+			sub=9;
+			save=Destination/10000;
+			Destination=Destination-(Destination/10000)*10000;
+			for(int i=0; i<arr.size();i++)
+				if(Math.abs(arr.elementAt(i)-save)<sub) {
+					sub=Math.abs(arr.elementAt(i)-save);
+					select=arr.elementAt(i);
+				}
+			channel+=select*10000;
+			count++;
+			button10000=1;
+		}else if(arr.elementAt(0)!=0) {
+			channel+=arr.elementAt(0)*10000;
+			count++;
+			button10000=1;
+		}else if(button100000==1&&arr.elementAt(0)==0) {
+			button10000=1;
+			count++;
+		}
+		if(Destination/1000>0) {
+			sub=9;
+			save=Destination/1000;
+			Destination=Destination-(Destination/1000)*1000;
+			for(int i=0; i<arr.size();i++) 
+				if(Math.abs(arr.elementAt(i)-save)<sub) {
+					sub=Math.abs(arr.elementAt(i)-save);
+					select=arr.elementAt(i);
+				}
+			channel+=select*1000;
+			count++;
+			button1000=1;
+		}else if(arr.elementAt(0)!=0) {
+			channel+=arr.elementAt(0)*1000;
+			count++;
+			button1000=1;
+		}else if(button10000==1&&arr.elementAt(0)==0) {
+			button1000=1;
+			count++;
+		}
+		if(Destination/100>0) {
+			sub=9;
+			save=Destination/100;
+			Destination=Destination-(Destination/100)*100;
+			for(int i=0; i<arr.size();i++)
+				if(Math.abs(arr.elementAt(i)-save)<sub) {
+					sub=Math.abs(arr.elementAt(i)-save);
+					select=arr.elementAt(i);
+				}
+			channel+=select*100;
+			count++;
+			button100=1;
+		}else if(arr.elementAt(0)!=0) {
+			channel+=arr.elementAt(0)*100;
+			count++;
+			button100=1;
+		}else if(button1000==1&&arr.elementAt(0)==0) {
+			button100=1;
+			count++;
+		}
+		if(Destination/10>0) {
+			sub=9;
+			save=Destination/10;
+			Destination=Destination-(Destination/10)*10;
+			for(int i=0; i<arr.size();i++)
+				if(Math.abs(arr.elementAt(i)-save)<sub) {
+					sub=Math.abs(arr.elementAt(i)-save);
+					select=arr.elementAt(i);
+				}
+			channel+=select*10;
+			count++;
+			button10=1;
+		}else if(arr.elementAt(0)!=0) {
+			channel+=arr.elementAt(0)*10;
+			count++;
+			button10=1;
+		}else if(button100==1&&arr.elementAt(0)==0) {
+			button10=1;
+			count++;
+		}
+		if(Destination>0) {
+			sub=9;
+			save=Destination;
+			for(int i=0; i<arr.size();i++)
+				if(Math.abs(arr.elementAt(i)-save)<sub) {
+					sub=Math.abs(arr.elementAt(i)-save);
+					select=arr.elementAt(i);
+				}
+			channel+=select;
+			count++;
+		}else if(arr.elementAt(0)!=0) {
+			channel+=arr.elementAt(0);
+			count++;
+		}else if(button10==1&&arr.elementAt(0)==0) {
+			count++;
+		}
+		
+		count=count+Math.abs((wantN-channel));
+		
+		if(count > Math.abs(wantN-100)) {
+			count=Math.abs(wantN-100);
+		}
+		
+		System.out.println(count);
+	}
+	public static void main(String args[]) {
+		Main m = new Main();
+	}
+}
