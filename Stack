@@ -1,0 +1,85 @@
+package Stack;
+
+import java.util.Scanner;
+
+public class Main {
+	int arr[];
+	Scanner sc = new Scanner(System.in);
+	int ps=0;
+	
+	public Main() {
+		int count =0;
+		count = sc.nextInt();
+		arr = new int[count];
+		char[] arrc=new char[8];
+		
+		System.out.println(arrc[0]);
+		String kk = sc.nextLine();
+		while(count-->0) {
+			String st = sc.nextLine();
+			if(st.length()>=6) {
+				int num = Integer.parseInt(st.substring(st.length()-(st.length()-5), st.length()));
+				String str = st.substring(0,4);
+				push(num);
+			}else {
+				String str = st;
+				switch(str) {
+				case "top" :
+					System.out.println(top());
+					break;
+				case "pop" :
+					System.out.println(pop());
+					break;
+				case "size" :
+					System.out.println(size());
+					break;
+				case "empty" :
+					System.out.println(empty());
+					break;
+				}
+			}
+		}
+	}
+	
+	void push(int x) {this.arr[this.ps++]=x;}
+	
+	int pop() {
+		if(this.ps ==0) {
+			return -1;
+		}else {
+			int save = arr[ps-1];
+			arr[--this.ps]=0;
+			return save;
+		}
+	}
+	
+	int size() {
+		int count =0;
+		for(int i=0;i<this.arr.length;i++) {
+			if(this.arr[i]!=0)
+				count++;
+			else
+				break;
+		}
+		return count;
+	}
+	
+	int empty(){
+		if(this.ps==0)
+			return 1;
+		else
+			return 0;
+	}
+	
+	int top() {
+		if(this.ps==0)
+			return -1;
+		else
+			return this.arr[this.ps-1];
+	}
+	
+	public static void main(String args[]) {
+		Main cs = new Main();
+	}
+}
+
