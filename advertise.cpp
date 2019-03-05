@@ -8,10 +8,11 @@ vector<int> fail(string p){
   int i=1,j=0;
   int m = p.size();
   vector<int> f(m,0);
+  f[0]=0;
 
   while(i<m){
     if(p[i]==p[j]){
-      f[i++]=(j++);
+      f[i++]=(j++)+1;
     }else if(j>0){
       j=f[j-1];
     }else{
@@ -21,32 +22,14 @@ vector<int> fail(string p){
   return f;
 }
 
-int kmp(string p){
-  int i,j,ans;
-  int m = p.size();
-  vector<int> f(m,0);
-
-  for(i=0;i<m;i++){
-    if(f[i]>0){
-      if(f[i]==1){
-        if(i==m-1){
-          ans = i;
-          break;
-        }else if(f[i]-f[i+1]!=-1){
-          
-        }
-      }
-    }
-  }
-  return ans;
-}
-
 int main(){
-  int size,i,ans;
+  int i,ans,n;
   string p;
+  cin>>n;
+  cin>>p;
+  // getline(cin, p);
+  vector<int> pi = fail(p);
+  cout<<n-(int)pi[n-1];
 
-  getline(cin, p);
-  ans = kmp(p);
-  printf("%d",ans);
-
+  return 0;
 }
