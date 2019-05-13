@@ -101,19 +101,7 @@ int main(){
       }
     }
   }
-
-  for(i=1;i<=n;i++)
-  {
-    for(j=1;j<=m;j++)
-    {
-      if(arr[i][j]==0)
-      {
         CopyMap(tmp,arr);
-        tmp[i][j]=1;
-        setwall(1);
-        tmp[i][j]=0;
-      }
-    }
-  }
+        setwall(0);
   printf("%d",num);
 }
