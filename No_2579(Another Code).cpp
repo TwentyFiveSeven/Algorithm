@@ -6,9 +6,9 @@ int n,stair[301];
 int dp[301];
 
 int main() {
-    cin >> n;
+    scanf("%d",&n);
     for (int i = 0; i < n; i++) {
-        cin >> stair[i];
+        scanf("%d",stair[i]);
     }
 
     dp[0] = stair[0];
