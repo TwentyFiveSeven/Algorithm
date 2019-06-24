@@ -1,7 +1,7 @@
 #include<iostream>
 using namespace std;
 
-long long int dp[101];
+long long int dp[101];  //범위 주의해서 계산하기.
 
 int main(){
   int i,j,t=0,n=0,save=3;
