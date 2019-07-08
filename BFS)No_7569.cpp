@@ -1,40 +1,48 @@
 #include<iostream>
 #include<queue>
+#include<tuple>
 
 using namespace std;
 
-int arr[101][101];
-int check[101][101];
+int arr[101][101][101];     //위 아래 박스도 고려하기 위한 3차원 배열
+int check[101][101][101];   //위 아래 박스도 고려하기 위한 3차원 배열
 
-int xi[4] = {1,-1,0,0};
-int yi[4] = {0,0,1,-1};
+int xi[6] = {0,0,1,-1,0,0}; // 위 아래 앞 뒤 오른쪽 왼쪽  이렇게 6개 방향을 확인한다
+int yi[6] = {0,0,0,0,1,-1}; // 위 아래 앞 뒤 오른쪽 왼쪽  이렇게 6개 방향을 확인한다
+int zi[6] = {1,-1,0,0,0,0}; // 위 아래 앞 뒤 오른쪽 왼쪽  이렇게 6개 방향을 확인한다
 
-queue<pair<int,int>> Q;
-int allcount[101];
-int checkcount[101];
-int n,m,maxvalue,h;   //allcount = 모든 토마토의 수, checkcount = 익은 토마토의 수
+queue<tuple<int,int,int>> Q;  // 상자의 순서를 기억하기위한 tuple
+int allcount[101];  // 모든 상자의 토마토 개수.
+int checkcount[101];  // 모든 상자의 토마토 개수( 익은 날짜로 활용)
+int n,m,maxvalue,h;
 
 void bfs(){
-  int i,j,x,y,nx,ny;
+  int i,j,x,y,nx,ny,countnum=0,z,nz;
 
-  while(!Q.empty()&&(allcount!=checkcount)){    //Q가 비어있지않아도 모든 토마토가 익었으면 탐색 중지.
-    x = Q.front().first;
-    y = Q.front().second;
+  while(!Q.empty()){
+    x = get<1>(Q.front());// tuple 은 get<얻고자하는 값의 순서>(값을 포함한 객체) 이렇게 사용한다.
+    y = get<2>(Q.front());  // 박스를 고려하기위한 z를 추가하였다.
+    z = get<0>(Q.front());
     Q.pop();
-    for(i=0;i<4;i++){
+    for(i=0;i<6;i++){
       nx = x + xi[i];
       ny = y + yi[i];
-      if(nx>=1&& nx<=n&&ny>=1&&ny<=m&&!arr[nx][ny]&&!check[nx][ny]){
-        Q.push(make_pair(nx,ny));
-        checkcount++;
-        check[nx][ny] = check[x][y]+1;    //현재 토마토가 익은 날짜는 이전 토마토의 날짜+1 이다.
-        maxvalue = check[nx][ny];     //마지막 check값이 가장 크기 때문에 계속해서 저장한다.
+      nz = z + zi[i];
+      if(nz>=1&&nz<=h&&nx>=1&& nx<=n&&ny>=1&&ny<=m&&!arr[nz][nx][ny]&&!check[nz][nx][ny]){  //범위안에 있는 z고려.
+        Q.push(make_tuple(nz,nx,ny));
+        checkcount[nz]++;
+        check[nz][nx][ny] = check[z][x][y]+1; //현재 토마토를 익게 한 토마토의 익은 날짜 + 1
+        maxvalue = check[nz][nx][ny];
       }
     }
   }
-  if(allcount==checkcount)  //익은 토마토의 수가 모든 토마토의 수와 같으면 값을 출력
+  for(i=1;i<=h;i++){    //모든 상자가 가지고 있는 토마토가 다 익었는지 확인.
+    if(allcount[i] == checkcount[i])
+        countnum++;
+    }
+  if(countnum==h)   //h 만큼의 상자의 모든 토마토가 다 익었다면 걸린 날짜를 출력.
     printf("%d",maxvalue);
-  else                      //같지않다면 -1을 출력
+  else
     printf("-1");
 }
 
@@ -43,18 +51,18 @@ int main(){
 
   scanf("%d %d %d",&m,&n,&h);
   for(i=1;i<=h;i++){
-    allcount[h] = n*m;
+    allcount[i] = n*m;
   }
 
   for(k=1;k<=h;k++){
     for(i=1;i<=n;i++){
       for(j=1;j<=m;j++){
-        scanf("%d",&arr[h][i][j]);
-        if(arr[h][i][j] ==1){
-          Q.push(make_pair(i,j));
-          checkcount[h]++;
-        }else if(arr[h][i][j] ==-1){
-          allcount[h]--;
+        scanf("%d",&arr[k][i][j]);
+        if(arr[k][i][j] ==1){
+          Q.push(make_tuple(k,i,j));
+          checkcount[k]++;
+        }else if(arr[k][i][j] ==-1){
+          allcount[k]--;
         }
       }
     }
