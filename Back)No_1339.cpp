@@ -4,10 +4,10 @@
 #include<string>
 #include<math.h>
 using namespace std;
-int coun[9];
-int n,arr[11][11],num[11],alpha[27],ans;
+int coun[9],inputcount;
+int n,arr[11][11],num[11],alpha[27],maxV;
 char input[9];
-int promising(int depth,int index,int value){
+int promising(int depth,int index){
   int tmp = alpha[arr[depth][index]];
   if(tmp)
     return alpha[arr[depth][index]];
@@ -16,45 +16,54 @@ int promising(int depth,int index,int value){
   }
 }
 
-void back(int depth,int index,int value){
-  int i,j,plus=0,k,mul=1;
-  for(i=9;i>=1;){
-    mul =1;
-    if(depth<1)
-      break;
-    if(!arr[depth][index]){
-      depth -=1;
-      index=0;
-      continue;
-    }
-    plus = promising(depth,index,i);
-    if(!plus){
-      num[i] =1;
-      alpha[arr[depth][index]] =i;
-      // printf("case : 0, depth : %d, value : %d\n",depth,i);
-      for(k=1;k<depth;k++) mul*=10;
-      ans += mul*i;
-      // printf("ans : %d\n",ans);
-      i--;index++;
+void back(int depth,int index,int ans){
+  int i=0,j,mul=1,val =0;
+  if(ans>maxV) maxV = ans;
+  if((depth<=1&&index>coun[1])||depth<1) {
+    printf(" 0 loop , depth : %d, index : %d, ans : %d, i : %d\n",depth,index,ans,i);
+    return;
+  }
+  if(!arr[depth][index]){
+    printf(" 1 loop , depth : %d, index : %d, ans : %d, i : %d\n",depth,index,ans,i);
+    back(depth-1,0,ans);
+    return;
+  }
+  for(i=9;i>9-inputcount;i--){
+    mul=1;
+    if(num[i]){
+      if(promising(depth,index)){
+        for(j=0;j<depth-1;j++) mul*=10;
+        val = promising(depth,index);
+        ans += mul*val;
+        printf(" 2 loop , depth : %d, index : %d, ans : %d, val : %d\n",depth,index,ans,val);
+        back(depth,index+1,ans);
+        return;
+      }else{
+        continue;
+      }
     }else{
-      for(k=1;k<depth;k++) mul*=10;
-      ans += mul*plus;
-      // printf("case : 1, depth : %d, value : %d\n",depth,plus);
-      // printf("ans : %d\n",ans);
-      index++;
+      if(promising(depth,index)){
+        for(j=0;j<depth-1;j++) mul*=10;
+        val = promising(depth,index);
+        ans += mul*val;
+        printf(" 3 loop , depth : %d, index : %d, ans : %d, val : %d\n",depth,index,ans,val);
+        back(depth,index+1,ans);
+        return;
+      }else{
+        num[i] = 1;
+        alpha[arr[depth][index]] = i;
+        for(j=0;j<depth-1;j++) mul*=10;
+        ans += mul*i;
+        printf(" 4 loop , depth : %d, index : %d, ans : %d, i : %d\n",depth,index,ans,i);
+        back(depth,index+1,ans);
+        num[i] = 0;
+        alpha[arr[depth][index]] = 0;
+        ans -= mul*i;
+        printf(" 5 loop , depth : %d, index : %d, ans : %d, i : %d\n",depth,index,ans,i);
+        continue;
+      }
     }
   }
-  // if(depth<1||value<1) return;
-  // if(!arr[depth][index]){
-  //   back(depth-1,1,value);
-  //   return;
-  // }
-  // plus = promising(depth,index,value);
-  // if(!plus){
-  //   num[value] =1;
-  //   alpha[arr[depth][index]] =value;
-  //   ans += ((int)(pow((doble)10,(double)depth)))*value;
-  // }
 }
 
 int main(){
@@ -62,9 +71,6 @@ int main(){
   int i=1,j,count=1,index=1,Rcount=1,k;
   scanf("%d",&n);
   scanf("%c",&temp);
-  // for(k=0;k<=9;k++){
-  //   coun[k] =1;
-  // }
 
   while(1){
     if(Rcount == n+1)break;
@@ -80,16 +86,18 @@ int main(){
       Rcount++;
       continue;
     }else{
+      inputcount++;
       input[count++] = temp;
       // printf("i : %d, index : %d,count : %d\n",i,index,count);
     }
   }
-  // for(i=1;i<=10;i++){
-  //   for(j=0;j<=8;j++){
-  //     printf("%d ",arr[i][j]);
-  //   }
-  //   printf("\n");
-  // }
-  back(10,0,9);
-  printf("%d",ans);
+  for(i=1;i<=8;i++){
+    for(j=0;j<=10;j++){
+      printf("%d ",arr[i][j]);
+    }
+    printf("\n");
+  }
+  printf("\n");
+  back(8,0,0);
+  printf("%d",maxV);
 }
