@@ -6,24 +6,29 @@ using namespace std;
 queue<pair<int,int>> Q;
 vector<pair<int,int>> V[100001];
 bool check[100001];
-vector<pair<int,int>>::iterator iter;
 int n;
 
-int bfs(int child){
-  int i,childN=0,maxvalue=0,size =0,weightN=0;
-  Q.push(make_pair(child,0));
-  while(!Q.empty()){
-    childN = Q.front().first;
-    weightN = Q.front().second;
-    Q.pop();
-      if(weightN>maxvalue){
-        maxvalue = weightN;
+int bfs(){
+  int i,j,childN=0,maxvalue=0,size =0,weightN=0,tmp=0;
+  for(i=1;i<=n;i++){
+    Q.push(make_pair(i,0));
+    check[i] = true;
+    while(!Q.empty()){
+      childN = Q.front().first;
+      weightN = Q.front().second;
+      Q.pop();
+        if(weightN>maxvalue){
+          maxvalue = weightN;
+        }
+      for(j=0;j<V[childN].size();j++){
+        tmp = V[childN][j].first;
+        if(!check[tmp]){
+          Q.push(make_pair(tmp,V[childN][j].second+weightN));
+          check[tmp] = true;
+        }
       }
-    for (iter = V[childN].begin(); iter != V[childN].end(); iter++){
-      if(check[(*iter).first]) continue;
-      Q.push(make_pair((*iter).first,(*iter).second+weightN));
-      check[(*iter).first] = 1;
     }
+    for(j=1;j<=n;j++) check[j]=0;
   }
   return maxvalue;
 }
@@ -38,30 +43,9 @@ int main(){
       if(child==-1) break;
       scanf("%d",&Nweight);
       V[parent].push_back(make_pair(child,Nweight));
-      if(child<parent){
-        pair<int,int> p = make_pair(parent,Nweight);
-        V[child].erase(p);
-      }
     }
   }
-
-  for(i=n;i>=1;i--){
-    left =0;right=0;
-    while(!V[i].empty()){ 
-      check[i] = 1;
-      value = bfs(i);
-      V[i].pop_back();
-      if(value>left){
-        right = left;
-        left = value;
-      }
-      else if(value>right) right = value;
-    }
-    for(j=1;j<=n;j++){
-      check[j]=0;
-    }
-    if((left+right)>maxvalue) maxvalue = left+right;
-  }
-  printf("%d",maxvalue);
+      value = bfs();
+  printf("%d",value);
   return 0;
 }
