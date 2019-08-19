@@ -13,35 +13,33 @@ int play(){
   int count=0,x=0,y=0,num=0,i,j;
 
   while(1){
-    if(!Q.empty()&&Q.front().first == count){
+    if(!Q.empty()&&Q.front().first == count){ //만약 턴하는 시간이 돼었다면.
       // reverse(snake.begin(),snake.end());
-      if(Q.front().second ==1){
+      if(Q.front().second ==1){ // 오른쪽일 때
         num +=1;
-        if(num>3) num = 0;
+        if(num>3) num = 0;  //3을 초과하면 다시 0의 방향으로 진행
       }else{
         num -=1;
-        if(num<0) num = 3;
+        if(num<0) num = 3;  //0보다 작아지면 다시 3의 방향으로 진행
       }
       Q.pop();
     }
-    x += xi[num]; y += yi[num];
-    // printf("x : %d, y : %d\n",x,y);
-    if(x<0||x>=n||y<0||y>=n) return count+1;
-    if(arr[x][y] != 0 ) Ssize++;
-    reverse(snake.begin(),snake.end());
-    snake.push_back(make_pair(x,y));
-    reverse(snake.begin(),snake.end());
-    // printf("before : %d\n",snake.size());
-    for(i=1;i<snake.size();i++){
-      // printf("%d %d %d %d\n",x,y,i,snake.size());
-      if(x == snake[i].first && y == snake[i].second) return count+1;
+    x += xi[num]; y += yi[num]; //뱀의 머리 이동
+    if(x<0||x>=n||y<0||y>=n) return count+1;  // 머리가 틀 밖으로 나갔으면 게임종료.
+    if(arr[x][y] != 0 ){
+      Ssize++;  //사과를 먹었다면 size 증가
+      arr[x][y] = 0;  //사과 제거
     }
-    for(i=snake.size();i>Ssize;i--){
+    reverse(snake.begin(),snake.end()); //뱀의 앞뒤를 뒤집어서 머리부분 추가.
+    snake.push_back(make_pair(x,y));
+    reverse(snake.begin(),snake.end()); // 다시 원상복귀
+    for(i=1;i<snake.size();i++){
+      if(x == snake[i].first && y == snake[i].second) return count+1; //만약 머리가 뱀의 몸통과 겹친다면 게임 종료
+    }
+    for(i=snake.size();i>Ssize;i--){  //머리부터 size만큼 남기고 나머지 pop
       snake.pop_back();
     }
-    // printf("after : %d\n",snake.size());
-  count++;
-  // printf("%d\n",count);
+  count++; //진행이 끝났다면 1초 ++
   }
 }
 
