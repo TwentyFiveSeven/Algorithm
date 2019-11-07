@@ -17,7 +17,6 @@ int solve(string s,int n){
   int size = s.size();
   for(i=0;i<size;i+=n){
     if(i+n+n>size || s.substr(i,n) != s.substr(i+n,n)){
-      cout<<s.substr(i,n)<<" "<<s.substr(i+n,n)<<endl;
       ret += min(n,size-i);
       if(length >1) ret += Len(length);
       length = 1;
