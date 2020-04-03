@@ -29,13 +29,10 @@ int LCA(int x,int y){
     if(depth[y]-depth[x] >=(1<<i)){
       y = dp[y][i];
     }
-    // else
-    //   break;
   }
   if(x ==y) return x;
   for(int i=MAX;i>=0;i--)
     if(dp[x][i] != dp[y][i]){
-      printf(" i : %d, y : %d, dp[y][i] : %d\n",i,y,dp[y][i]);
       x = dp[x][i];
       y = dp[y][i];
     }
