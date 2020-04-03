@@ -27,20 +27,16 @@ int LCA(int a, int b){
   K[0] = -2100000001, K[1] = 2100000001;
   if(depth[a] > depth[b]) //항상 b가 depth 크다
     swap(a,b);
-  // int val = depth[b]-depth[a];
   for(int i=MAX;i>=0;i--){
     if(depth[b]-depth[a]>=(1<<i)){
       K[0] = max(K[0],Max[b][i]);
       K[1] = min(K[1],Min[b][i]);
-      // printf(" b : %d, i : %d, dp[b][i] : %d\n",b,i,dp[b][i]);
       b = dp[b][i];
     }
   }
   if(a == b) return 0;
-  printf("in\n");
   for(int i=MAX;i>=0;i--){
     if(dp[a][i] != dp[b][i]){
-      printf("i : %d\n",i);
       K[0] = max({K[0],Max[a][i],Max[b][i]});
       K[1] = min({K[1],Min[a][i],Min[b][i]});
       a = dp[a][i];
@@ -69,12 +65,6 @@ int main(){
       Min[j][i] = min(Min[j][i-1],Min[dp[j][i-1]][i-1]);
       Max[j][i] = max(Max[j][i-1],Max[dp[j][i-1]][i-1]);
     }
-  }
-  for(int i=1;i<=N;i++){
-    for(int j=0;j<=MAX;j++){
-      printf("%d ",dp[i][j]);
-    }
-    printf("\n");
   }
   cin>>M;
   for(int i=0;i<M;i++){
