@@ -1,14 +1,24 @@
 #include<iostream>
 #include<vector>
 #include<math.h>
+#include<climits>
 using namespace std;
+
+typedef struct node node;
+int arr_empty(vector<int> arr);
+void plus_Node(vector<int> I, node* N,vector<int> arr,int i);
+vector<int> makeRest(int num,vector<int> arr);
+void Make_Tree(node* N,vector<int> arr);
+vector<int> input_Stone(vector<int> &arr,char* argv[],int Limit);
+
 bool Player = true;
 vector<int> input,K,temp;
-int N,M,DEPTH=0,VISIT_NODE=0;
+int Num,M,DEPTH=0,VISIT_NODE=0;
 
 typedef struct node{
-  int num = 0;
-  vector<pair<int,pair<double,node*>>> children;
+  int num = -2;
+  double EvaluationV = 0.0;
+  vector<node*> children;
 
   void insert(vector<int> S){
     int size = S.size();
@@ -16,29 +26,29 @@ typedef struct node{
     for(int i=0;i<size;i++){
       node* NewN = new node;
       NewN->num = S[i];
-      children.push_back(make_pair(S[i],make_pair(0.0,NewN)));
+      children.push_back(NewN);
     }
   }
 
-  pair<int,double> AB_pruning(int NodeValue,double NodeEvalu,double alpha, double beta,int dep,bool TURN){
+  pair<int,double> AB_pruning(double alpha, double beta,int dep,bool TURN){
     int ANS_NODE = -1;
-    if(NodeValue == 0)
-      return make_pair(num,NodeEvalu);
-    if(NodeValue == -1){
+    if(num == 0)
+      return make_pair(num,EvaluationV);
+    if(num == -1){
       DEPTH = max(DEPTH,dep);
-      return make_pair(num,NodeEvalu);
+      return make_pair(num,EvaluationV);
     }
     if(TURN){  //Max
       int size = children.size();
       for(int i=0;i<size;i++){
-        int val = children[i].first;
+        int val = children[i]->num;
         if(val != 0)
           VISIT_NODE++;
-        pair<int,double> T = children[i].second.second->AB_pruning(val,children[i].second.first,alpha,beta,dep+1,false);
+        pair<int,double> T = children[i]->AB_pruning(alpha,beta,dep+1,false);
         DEPTH = max(DEPTH,dep);
-        if(i == 0) ANS_NODE = children[i].first;
+        if(i == 0) ANS_NODE = children[i]->num;
         if(T.second > alpha){
-          ANS_NODE = children[i].first;
+          ANS_NODE = children[i]->num;
           alpha = T.second;
         }
         if(beta <= alpha)
@@ -48,14 +58,14 @@ typedef struct node{
     }else{  //MIN
       int size = children.size();
       for(int i=0;i<size;i++){
-        int val = children[i].first;
+        int val = children[i]->num;
         if(val != 0)
           VISIT_NODE++;
-        pair<int,double> T = children[i].second.second->AB_pruning(val,children[i].second.first,alpha,beta,dep+1,true);
+        pair<int,double> T = children[i]->AB_pruning(alpha,beta,dep+1,true);
         DEPTH = max(DEPTH,dep);
-        if(i == 0) ANS_NODE = children[i].first;
+        if(i == 0) ANS_NODE = children[i]->num;
         if(T.second < beta){
-          ANS_NODE = children[i].first;
+          ANS_NODE = children[i]->num;
           beta = T.second;
         }
         if(beta <= alpha)
@@ -66,32 +76,62 @@ typedef struct node{
   }
 }node;
 
+int main(int args, char* argv[]){
+  string s;
+  node* root = new node;
+  Num = atoi(argv[1]);
+  M = atoi(argv[2]);
+  int al = Num+1,val,Limit = Num/2+Num%2;
+  vector<int> arr(al,0);
+  input = input_Stone(arr,argv,Limit);
+  if(input.size()==1 && input[0] == -400)
+    return 0;
+  M%2 ? Player = !Player : Player;
+  input.size() == 0 ? val = 0 : val = input[input.size()-1];
+  vector<int> R = makeRest(val,arr);
+  root->insert(R);
+  Make_Tree(root,arr);
+  M%2 ? Player = false : Player = true;
+  pair<int,double> ANS = root->AB_pruning(-2.0,2.0,-1,Player);
+
+  cout << fixed;
+  cout.precision(1);
+  cout<<"Best Move : "<<ANS.first<<'\n';
+  cout<<"Calculated Value : "<<ANS.second<<'\n';
+  cout<<"Number of Visited Nodes : "<<VISIT_NODE<<'\n';
+  cout<<"Max Depth : "<<DEPTH;
+  return 0;
+}
+
+
 int arr_empty(vector<int> arr){
-  for(int i=1;i<=N;i++) if(arr[i] == 0) return 0;
+  for(int i=1;i<=Num;i++) if(arr[i] == 0) return 0;
   return 1;
 }
 
 void plus_Node(vector<int> I, node* N,vector<int> arr,int i){
   double val = 1;
   if(Player) val = -val;
-  if(K.size() == 0){
+  if(I.size() == 0){
     if(!arr_empty(arr)){
       node* NewN = new node;
       NewN->num = -1;
-      N->children[i].second.second->children.push_back(make_pair(-1,make_pair(val,NewN)));
+      NewN->EvaluationV = val;
+      N->children[i]->children.push_back(NewN);
     }else{
       node* NewN = new node;
       NewN->num = 0;
-      N->children[i].second.second->children.push_back(make_pair(0,make_pair(val,NewN)));
+      NewN->EvaluationV = val;
+      N->children[i]->children.push_back(NewN);
     }
   }else
-    N->children[i].second.second->insert(I);
+    N->children[i]->insert(I);
 }
 
 vector<int> makeRest(int num,vector<int> arr){
   vector<int> ret;
   if(num ==0){
-    for(int i=1;i<N/2+N%2;i++){
+    for(int i=1;i<Num/2+Num%2;i++){
       if(i%2)
         ret.push_back(i);
     }
@@ -102,9 +142,9 @@ vector<int> makeRest(int num,vector<int> arr){
       if(num%i==0){
         ret.push_back(i);
       }
-  for(int i=2;i<=N;i++){
+  for(int i=2;i<=Num;i++){
     int val = num*i;
-    if(val >N) break;
+    if(val >Num) break;
     if(!arr[val])
       ret.push_back(val);
   }
@@ -115,50 +155,31 @@ void Make_Tree(node* N,vector<int> arr){
   int size = N->children.size();
   if(size == 0) return;
   for(int i=0;i<size;i++){
-    int val = N->children[i].first;
-    if(val == -1) return;
+    int val = N->children[i]->num;
+    if(val == -1 || val == 0) return;
     arr[val] = 1;
     Player = !Player;
     K = makeRest(val,arr);
     plus_Node(K,N,arr,i);
     K.clear();
-    Make_Tree(N->children[i].second.second,arr);
+    Make_Tree(N->children[i],arr);
     arr[val] = 0;
     Player = !Player;
   }
 }
 
-int main(){
-  string s;
-  cin>>N>>M;
-  int al = N+1,a,val;
-  vector<int> arr(al,0);
+vector<int> input_Stone(vector<int> &arr,char* argv[],int Limit){
+  vector<int> ret;
+  int a;
   for(int i=0;i<M;i++){
-    cin>>a;
+    a = atoi(argv[3+i]);
+    if(i==0 && a >=Limit){
+      cout<<"The first player must choose an odd stone smaller than N/2\nEnd The Game";
+      ret.push_back(-400);
+      return ret;
+    }
     arr[a] = 1;
-    input.push_back(a);
+    ret.push_back(a);
   }
-  if(M%2)
-    Player = !Player;
-  if(input.size() == 0)
-    val = 0;
-  else
-    val = input[input.size()-1];
-  vector<int> R = makeRest(val,arr);
-  node* root = new node;
-  root->insert(R);
-  Make_Tree(root,arr);
-  // cout<<root->children[0].first<<'\n';
-  // cout<<root->children[0].second.second->children[0].first<<'\n';
-  // cout<<root->children[0].second.second->children[0].second.second->children[0].second.first<<'\n';
-  if(M%2)
-    Player = false;
-  else
-    Player = true;
-  pair<int,double> ANS = root->AB_pruning(-2,0.0,-1.0,1.0,-1,Player);
-  cout<<"Best Move : "<<ANS.first<<'\n';
-  cout<<"Calculated Value : "<<ANS.second<<'\n';
-  cout<<"Number of Visited Nodes : "<<VISIT_NODE<<'\n';
-  cout<<"Max Depth : "<<DEPTH;
-  return 0;
+  return ret;
 }
