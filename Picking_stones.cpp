@@ -10,6 +10,8 @@ void plus_Node(vector<int> I, node* N,vector<int> arr,int i);
 vector<int> makeRest(int num,vector<int> arr);
 void Make_Tree(node* N,vector<int> arr);
 vector<int> input_Stone(vector<int> &arr,char* argv[],int Limit);
+int check(int num);
+vector<pair<double,int>> Evaluation(vector<int> R,vector<int> arr);
 
 bool Player = true;
 vector<int> input,K,temp;
@@ -92,7 +94,7 @@ int main(int args, char* argv[]){
   root->insert(R);
   Make_Tree(root,arr);
   M%2 ? Player = false : Player = true;
-  pair<int,double> ANS = root->AB_pruning(-2.0,2.0,-1,Player);
+  pair<int,double> ANS = root->AB_pruning(INT_MIN,INT_MAX,-1,Player);
 
   cout << fixed;
   cout.precision(1);
@@ -180,6 +182,106 @@ vector<int> input_Stone(vector<int> &arr,char* argv[],int Limit){
     }
     arr[a] = 1;
     ret.push_back(a);
+  }
+  return ret;
+}
+
+int check(int num){
+  int size = sqrt(num);
+  for(int i=2;i<=size;i++){
+    if(num%i ==0) return 0;
+  }
+  return 1;
+}
+
+vector<pair<double,int>> Evaluation(vector<int> R,vector<int> arr){
+  vector<pair<double,int>> ret;
+  vector<int> temp;
+  vector<int> tmp = arr;
+  int size = R.size();
+  for(int i=0;i<size;i++){
+    tmp[R[i]] = 1;
+    if(tmp[1] == 0){
+      ret.push_back(make_pair(0,R[i]));
+      tmp = arr;
+      continue;
+    }
+    temp = makeRest(R[i],tmp);
+    int Tsize = temp.size();
+    printf("Tsize : %d\n",Tsize);
+    if(Player){
+      if(Tsize == 0){
+        if(Player){
+          ret.push_back(make_pair(1.0,R[i]));
+        }else{
+          ret.push_back(make_pair(-1.0,R[i]));
+        }
+      }else{
+        if(R[i] == 1){
+          if(Tsize%2)
+            ret.push_back(make_pair(0.5,R[i]));
+          else
+            ret.push_back(make_pair(-0.5,R[i]));
+        }else if(check(R[i])){
+          int count = 0;
+          for(int j=0;j<Tsize;j++)
+            if(temp[i]%R[i] == 0)
+              count++;
+          if(count%2){
+            ret.push_back(make_pair(0.7,R[i]));
+          }else
+            ret.push_back(make_pair(-0.7,R[i]));
+        }else{
+          int count =0;
+          for(int j=0;j<Tsize;j++){
+            if(check(temp[j]))
+              count++;
+          }
+          if(count%2)
+            ret.push_back(make_pair(0.6,R[i]));
+          else
+            ret.push_back(make_pair(-0.6,R[i]));
+        }
+      }
+    }else{
+      if(Tsize == 0){
+        if(Player){
+          ret.push_back(make_pair(1.0,R[i]));
+        }else{
+          ret.push_back(make_pair(-1.0,R[i]));
+        }
+      }else{
+        if(R[i] == 1){
+          if(temp.size()%2)
+            ret.push_back(make_pair(-0.5,R[i]));
+          else
+            ret.push_back(make_pair(0.5,R[i]));
+        }else if(check(R[i])){
+          int count = 0;
+          for(int j=0;j<Tsize;j++)
+            if(temp[i]%R[i] == 0)
+              count++;
+          if(count%2){
+            ret.push_back(make_pair(-0.7,R[i]));
+          }else
+            ret.push_back(make_pair(0.7,R[i]));
+        }else{
+          int count =0;
+          for(int j=0;j<Tsize;j++){
+            if(check(temp[j])){
+              printf("temp[j] : %d\n",temp[j]);
+              count++;
+            }
+          }
+          if(count%2)
+            ret.push_back(make_pair(-0.6,R[i]));
+          else
+            ret.push_back(make_pair(0.6,R[i]));
+        }
+      }
+    }
+    temp.clear();
+    tmp = arr;
   }
   return ret;
 }
