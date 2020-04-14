@@ -3,8 +3,21 @@ using namespace std;
 
 int N,M,city[201][201],parent[201];
 
-void join(int l, int r){
+int Find(int a){
+  if(a == parent[a])
+    return a;
+  return parent[a] = Find(parent[a]);
+}
 
+void Union(int a, int b){
+  int Pa = Find(a);
+  int Pb = Find(b);
+
+  if( Pa == Pb) return;
+  if(Pb > Pa)
+    parent[Pb] = Pa;
+  else
+    parent[Pa] = Pb;
 }
 
 int main(){
@@ -16,11 +29,7 @@ int main(){
     for(int j=1;j<=N;j++){
       scanf("%d",&a);
       if(a == 1){
-        if(parent[j] > parent[i])
-          parent[j] = parent[i];
-        else
-          parent[i] = parent[j];
-
+        Union(i,j);
       }
     }
   }
@@ -28,7 +37,7 @@ int main(){
   scanf("%d",&First);
   for(int i=1;i<M;i++){
     scanf("%d",&Second);
-    if(parent[First] != parent[Second]){
+    if(Find(First) != Find(Second)){
       printf("NO");
       return 0;
     }
