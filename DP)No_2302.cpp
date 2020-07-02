@@ -2,27 +2,33 @@
 #include<vector>
 using namespace std;
 vector<int> V;
-int arr[10001];
+int arr[41], dp[41];
 int main(){
-  int T,N,temp,M;
-  arr[0] = 1;
-  cin>>T;
-  while(T--){
-    cin>>N;
-    for(int i=0;i<N;i++){
-      cin>>temp;
-      V.push_back(temp);
-    }
-    cin>>M;
-    for(int i=0;i<N;i++){
-      for(int j=V[i];j<=M;j++){
-        arr[j] += arr[j-V[i]];
-      }
-    }
-    cout<<arr[M]<<'\n';
-    for(int i=1;i<=M;i++)
-      arr[i] = 0;
-    V.clear();
+  int N,temp,M;
+  dp[0] = 1;
+  dp[1] = 1;
+  cin>>N>>M;
+  for(int i=0;i<M;i++){
+    cin>>temp;
+    arr[temp] = 1;
+    if(temp+1 <=N)
+      arr[temp+1] = 2;
+    if(temp+2 <=N)
+      arr[temp+2] = 3;
   }
+  for(int i=2;i<=N;i++){
+    if(arr[i] ==1 || arr[i] ==2){
+      dp[i] = dp[i-1];
+    }else if(arr[i] == 3){
+      dp[i] = dp[i-1]*2;
+    }else{
+      dp[i] = dp[i-1] + dp[i-2];
+    }
+  }
+  // for(int i=1;i<=N;i++){
+  //   cout<<dp[i]<<' ';
+  // }
+  // cout<<'\n';
+  cout<<dp[N];
   return 0;
 }
