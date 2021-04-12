@@ -1,7 +1,7 @@
 const fs = require("fs");
 
 const inputAll = fs
-  .readFileSync("../input.txt")
+  .readFileSync("/dev/stdin")
   .toString()
   .split(" ")
   .map((value) => {
