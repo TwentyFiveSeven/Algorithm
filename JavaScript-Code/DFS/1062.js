@@ -1,7 +1,6 @@
 const fs = require("fs");
 
 const inputAll = fs.readFileSync("/dev/stdin").toString().split("\n");
-// const inputAll = fs.readFileSync("./input.txt").toString().split("\n");
 const inputNM = inputAll.shift().split(" ");
 const N = inputNM[0],
   K = inputNM[1];
